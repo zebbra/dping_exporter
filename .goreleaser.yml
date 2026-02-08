@@ -1,0 +1,34 @@
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    binary: dping_exporter
+    ldflags:
+      - -s -w -X github.com/zebbra/dping_exporter/cmd.version={{.Version}}
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+
+dockers_v2:
+  - images:
+      - "quay.io/zebbra/dping_exporter"
+    tags:
+      - "v{{ .Version }}"
+    labels:
+      "org.opencontainers.image.description": "dping_exporter: Distributed Ping Exporter"
+      "org.opencontainers.image.created": "{{.Date}}"
+      "org.opencontainers.image.name": "{{.ProjectName}}"
+      "org.opencontainers.image.revision": "{{.FullCommit}}"
+      "org.opencontainers.image.version": "{{.Version}}"
+      "org.opencontainers.image.source": "{{.GitURL}}"
+    platforms:
+      - linux/amd64
+      - linux/arm64
